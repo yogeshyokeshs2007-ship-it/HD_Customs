@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HD CUSTOMS | Workshop Studio Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="dash-sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/hd-customs-logo.png" alt="HD CUSTOMS" />
+      <div class="sidebar-brand-text">
+        <h2>HD CUSTOMS</h2>
+        <span>STUDIO OS v2.0</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <div class="menu-label">Main Controls</div>
+      <a class="nav-item active" data-tab="overview">
+        <span class="icon">📊</span>
+        <span>Studio Overview</span>
+      </a>
+      <a class="nav-item" data-tab="jobs">
+        <span class="icon">🏍️</span>
+        <span>Bike Build Pipeline</span>
+        <span class="nav-badge" id="badgeActiveJobs">0</span>
+      </a>
+      <a class="nav-item" data-tab="inquiries">
+        <span class="icon">💬</span>
+        <span>Quote Inquiries</span>
+        <span class="nav-badge" id="badgeInquiries" style="background:var(--blue);color:#fff;">0</span>
+      </a>
+
+      <div class="menu-label">Operations</div>
+      <a class="nav-item" data-tab="inventory">
+        <span class="icon">🎨</span>
+        <span>Paints & Materials</span>
+        <span class="nav-badge" id="badgeLowStock" style="background:var(--red);color:#fff;display:none;">0</span>
+      </a>
+      <a class="nav-item" data-tab="invoices">
+        <span class="icon">🧾</span>
+        <span>Invoices & Billing</span>
+      </a>
+      <a class="nav-item" data-tab="gallery">
+        <span class="icon">🖼️</span>
+        <span>Showcase Gallery</span>
+      </a>
+      <a class="nav-item" data-tab="settings">
+        <span class="icon">⚙️</span>
+        <span>Studio Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-badge">
+        <div class="user-avatar" id="userAvatar">H</div>
+        <div class="user-info">
+          <div class="name" id="userName">Hemanth</div>
+          <div class="role" id="userRole">Lead Master</div>
+        </div>
+      </div>
+      <button class="btn-icon-danger" id="logoutBtn" title="Logout">⏻</button>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="dash-main">
+    <header class="dash-topbar">
+      <div class="topbar-left">
+        <button class="mobile-toggle" id="mobileToggle">☰</button>
+        <div>
+          <h1 class="page-title" id="pageTitle">Studio Overview</h1>
+          <div class="page-subtitle" id="pageSubtitle">Live status of custom motorcycle projects & workshop metrics</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span id="dashDbStatus" class="badge" style="background:#141418;border:1px solid #333;font-size:11px;padding:6px 10px;border-radius:14px;color:var(--text-muted);cursor:pointer;" title="Click to refresh SQLite connection">
+          🟡 Checking Database...
+        </span>
+        <a href="/" target="_blank" class="site-link-btn">
+          <span>🌐</span> View Customer Website ↗
+        </a>
+        <button class="btn-primary" id="topbarActionBtn" onclick="openNewJobModal()">
+          <span>+</span> New Bike Job
+        </button>
+      </div>
+    </header>
+
+    <main class="dash-content">
+
+      <!-- TAB 1: OVERVIEW -->
+      <section class="tab-panel active" id="tab-overview">
+        <!-- KPI Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card accent-gold">
+            <div class="metric-header">
+              <span>Active Builds</span>
+              <span class="metric-icon">🏍️</span>
+            </div>
+            <div class="metric-value" id="statActiveJobs">0</div>
+            <div class="metric-footer">Bikes currently on workshop floor</div>
+          </div>
+
+          <div class="metric-card accent-green">
+            <div class="metric-header">
+              <span>Ready for Delivery</span>
+              <span class="metric-icon">✨</span>
+            </div>
+            <div class="metric-value" id="statReadyJobs">0</div>
+            <div class="metric-footer">Final inspection passed</div>
+          </div>
+
+          <div class="metric-card accent-blue">
+            <div class="metric-header">
+              <span>New Inquiries</span>
+              <span class="metric-icon">💬</span>
+            </div>
+            <div class="metric-value" id="statInquiries">0</div>
+            <div class="metric-footer">Awaiting quote / consultation</div>
+          </div>
+
+          <div class="metric-card accent-red">
+            <div class="metric-header">
+              <span>Pending Balances</span>
+              <span class="metric-icon">💰</span>
+            </div>
+            <div class="metric-value" id="statPendingBalance">₹0</div>
+            <div class="metric-footer">To be collected on bike delivery</div>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <!-- Build Pipeline Distribution -->
+          <div class="card">
+            <div class="card-title-bar">
+              <h3><span>🎨</span> Active Pipeline Stages</h3>
+              <button class="btn-secondary" onclick="switchTab('jobs')">View Kanban Board →</button>
+            </div>
+            <div class="stage-pipeline" id="overviewPipeline">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Quick Actions & Studio Pulse -->
+          <div class="card">
+            <div class="card-title-bar">
+              <h3><span>⚡</span> Quick Actions</h3>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <button class="btn-primary" style="justify-content:flex-start;padding:12px 16px;" onclick="openNewJobModal()">
+                <span>🏍️</span> Intake New Bike for Custom Paint
+              </button>
+              <button class="btn-secondary" style="justify-content:flex-start;padding:12px 16px;" onclick="switchTab('inquiries')">
+                <span>💬</span> Review Pending Website Quotes
+              </button>
+              <button class="btn-secondary" style="justify-content:flex-start;padding:12px 16px;" onclick="openNewInvoiceModal()">
+                <span>🧾</span> Generate Customer Invoice & Receipt
+              </button>
+              <button class="btn-secondary" style="justify-content:flex-start;padding:12px 16px;" onclick="openAddInventoryModal()">
+                <span>📦</span> Restock Paint & Consumables
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Projects Table -->
+        <div class="card">
+          <div class="card-title-bar">
+            <h3><span>🏍️</span> Recent Motorcycle Builds</h3>
+            <button class="btn-secondary" onclick="switchTab('jobs')">See All Jobs →</button>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Job Code</th>
+                  <th>Customer</th>
+                  <th>Motorcycle</th>
+                  <th>Current Stage</th>
+                  <th>Progress</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="overviewRecentJobs">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: BIKE JOBS & PIPELINE -->
+      <section class="tab-panel" id="tab-jobs">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" class="form-control" id="jobSearchInput" placeholder="Search by name, phone, bike, code..." style="width:260px;" />
+            <select class="form-control" id="jobStatusFilter" style="width:160px;">
+              <option value="All">All Statuses</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Ready for Delivery">Ready for Delivery</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <div style="background:#16161a;border:1px solid var(--border);border-radius:6px;padding:3px;display:flex;">
+              <button id="viewKanbanBtn" class="btn-secondary" style="border:none;padding:6px 12px;font-size:11px;background:var(--gold);color:#000;font-weight:700;">Kanban</button>
+              <button id="viewTableBtn" class="btn-secondary" style="border:none;padding:6px 12px;font-size:11px;background:transparent;">Table</button>
+            </div>
+            <button class="btn-primary" onclick="openNewJobModal()">+ New Bike Build</button>
+          </div>
+        </div>
+
+        <!-- Kanban View -->
+        <div id="jobsKanbanView" class="kanban-board">
+          <!-- Dynamically populated columns -->
+        </div>
+
+        <!-- Table View -->
+        <div id="jobsTableView" class="table-container" style="display:none;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Job Code</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Bike Model</th>
+                <th>Service</th>
+                <th>Stage</th>
+                <th>Progress</th>
+                <th>Financials</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="jobsTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 3: INQUIRIES & QUOTES -->
+      <section class="tab-panel" id="tab-inquiries">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" class="form-control" id="inquirySearchInput" placeholder="Search inquiries..." style="width:260px;" />
+            <select class="form-control" id="inquiryStatusFilter" style="width:160px;">
+              <option value="All">All Inquiries</option>
+              <option value="New">New</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Quoted">Quoted</option>
+              <option value="Converted">Converted</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tracking Code</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Bike Model</th>
+                <th>Service & Finish</th>
+                <th>Requirements</th>
+                <th>Budget</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inquiriesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: INVENTORY -->
+      <section class="tab-panel" id="tab-inventory">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" class="form-control" id="inventorySearchInput" placeholder="Search materials & paints..." style="width:260px;" />
+            <select class="form-control" id="inventoryCategoryFilter" style="width:180px;">
+              <option value="All">All Categories</option>
+              <option value="Paints & Pearls">Paints & Pearls</option>
+              <option value="Clearcoats & Thinners">Clearcoats & Thinners</option>
+              <option value="Primers & Fillers">Primers & Fillers</option>
+              <option value="Abrasives & Sanding">Abrasives & Sanding</option>
+              <option value="Airbrush & Detailing">Airbrush & Detailing</option>
+              <option value="Tools & Safety">Tools & Safety</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="openAddInventoryModal()">+ Add Material</button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Stock Level</th>
+                <th>Min Alert</th>
+                <th>Unit Price</th>
+                <th>Supplier</th>
+                <th>Status</th>
+                <th>Adjust Stock</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 5: INVOICES & BILLING -->
+      <section class="tab-panel" id="tab-invoices">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" class="form-control" id="invoiceSearchInput" placeholder="Search invoices..." style="width:260px;" />
+            <select class="form-control" id="invoiceStatusFilter" style="width:160px;">
+              <option value="All">All Statuses</option>
+              <option value="Paid">Paid</option>
+              <option value="Partial">Partial</option>
+              <option value="Unpaid">Unpaid</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="openNewInvoiceModal()">+ Create New Invoice</button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Invoice #</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Bike Model</th>
+                <th>Total Amount</th>
+                <th>Paid</th>
+                <th>Balance Due</th>
+                <th>Payment Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoicesTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 6: SHOWCASE GALLERY -->
+      <section class="tab-panel" id="tab-gallery">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+          <p style="font-size:13px;color:var(--text-muted);">Manage before & after transformation photos displayed on the customer website.</p>
+          <button class="btn-primary" onclick="openAddGalleryModal()">+ Upload New Build Project</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:20px;" id="galleryGrid">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- TAB 7: SETTINGS -->
+      <section class="tab-panel" id="tab-settings">
+        <div class="card" style="max-width:800px;">
+          <div class="card-title-bar">
+            <h3><span>⚙️</span> Workshop & Business Profile</h3>
+          </div>
+          <form id="settingsForm">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Studio Name</label>
+                <input type="text" class="form-control" name="studio_name" required />
+              </div>
+              <div class="form-group">
+                <label>Lead Artist Name</label>
+                <input type="text" class="form-control" name="lead_artist" required />
+              </div>
+              <div class="form-group">
+                <label>Phone Number (Calling)</label>
+                <input type="text" class="form-control" name="phone" required />
+              </div>
+              <div class="form-group">
+                <label>WhatsApp Number (with country code)</label>
+                <input type="text" class="form-control" name="whatsapp" required />
+              </div>
+              <div class="form-group">
+                <label>Instagram Handle / Link</label>
+                <input type="text" class="form-control" name="instagram" required />
+              </div>
+              <div class="form-group">
+                <label>UPI ID for Payments</label>
+                <input type="text" class="form-control" name="upi_id" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Studio Physical Address</label>
+              <textarea class="form-control" name="address" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label>Google Maps Link</label>
+              <input type="text" class="form-control" name="google_maps" />
+            </div>
+            <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+              <button type="submit" class="btn-primary">Save Settings</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: NEW / EDIT BIKE JOB -->
+  <div class="modal-overlay" id="jobModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="jobModalTitle">Intake New Motorcycle Build</h3>
+        <button class="modal-close-btn" onclick="closeModal('jobModal')">✕</button>
+      </div>
+      <form id="jobForm">
+        <input type="hidden" name="job_id" id="jobEditId" />
+        <div class="modal-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Customer Name *</label>
+              <input type="text" class="form-control" name="customer_name" id="jf_customer_name" required />
+            </div>
+            <div class="form-group">
+              <label>Customer Phone *</label>
+              <input type="text" class="form-control" name="customer_phone" id="jf_customer_phone" required />
+            </div>
+            <div class="form-group">
+              <label>Motorcycle Model *</label>
+              <input type="text" class="form-control" name="bike_model" id="jf_bike_model" placeholder="e.g. Continental GT 650" required />
+            </div>
+            <div class="form-group">
+              <label>Registration / Number Plate</label>
+              <input type="text" class="form-control" name="reg_number" id="jf_reg_number" placeholder="e.g. TN 05 AK 9988" />
+            </div>
+            <div class="form-group">
+              <label>Service Type</label>
+              <select class="form-control" name="service_type" id="jf_service_type">
+                <option>Custom Bike Painting</option>
+                <option>Custom Graphics</option>
+                <option>Artistic Finishing</option>
+                <option>Airbrush Art</option>
+                <option>Colour Transformation</option>
+                <option>Full Bike Makeover</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Color & Finish Concept</label>
+              <input type="text" class="form-control" name="color_finish" id="jf_color_finish" placeholder="e.g. Candy Apple Red with Silver Flake" />
+            </div>
+            <div class="form-group">
+              <label>Current Stage</label>
+              <select class="form-control" name="current_stage" id="jf_current_stage">
+                <option>Consultation & Intake</option>
+                <option>Surface Stripping & Prep</option>
+                <option>Epoxy Priming</option>
+                <option>Custom Paint & Airbrush Art</option>
+                <option>Clearcoat & Curing</option>
+                <option>Polishing & Detailing</option>
+                <option>Quality Check & Ready</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Progress Percentage (0 - 100%)</label>
+              <input type="number" class="form-control" name="stage_progress" id="jf_stage_progress" min="0" max="100" value="15" />
+            </div>
+            <div class="form-group">
+              <label>Total Estimate Amount (₹)</label>
+              <input type="number" class="form-control" name="total_amount" id="jf_total_amount" required />
+            </div>
+            <div class="form-group">
+              <label>Advance Received (₹)</label>
+              <input type="number" class="form-control" name="advance_paid" id="jf_advance_paid" value="0" />
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select class="form-control" name="status" id="jf_status">
+                <option>In Progress</option>
+                <option>Ready for Delivery</option>
+                <option>Delivered</option>
+                <option>On Hold</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Estimated Delivery Date</label>
+              <input type="date" class="form-control" name="estimated_delivery" id="jf_estimated_delivery" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Studio Notes & Build Specifications</label>
+            <textarea class="form-control" name="notes" id="jf_notes" rows="3" placeholder="Specific paint layers, customer expectations, artwork requirements..."></textarea>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Initial / Before Photo</label>
+              <input type="file" class="form-control" name="before_photo" accept="image/*" />
+            </div>
+            <div class="form-group">
+              <label>Current WIP Photo</label>
+              <input type="file" class="form-control" name="current_photo" accept="image/*" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('jobModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Motorcycle Job</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: JOB DETAIL & TIMELINE -->
+  <div class="modal-overlay" id="jobDetailModal">
+    <div class="modal-content" style="max-width:780px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="jdm_title">Job Details</h3>
+          <span style="font-size:12px;color:var(--gold-light);font-family:monospace;" id="jdm_code">HDC-2026-101</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('jobDetailModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;background:#0d0d10;padding:16px;border-radius:8px;border:1px solid var(--border);">
+          <div>
+            <h4 style="color:#fff;font-size:16px;" id="jdm_bike">Royal Enfield GT 650</h4>
+            <p style="color:var(--text-muted);font-size:12px;" id="jdm_customer">Karthik Raja (9840123456)</p>
+            <p style="color:var(--gold-light);font-size:12px;margin-top:4px;" id="jdm_finish">Candy Apple Red</p>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px;color:var(--text-muted);">Financial Breakdown</div>
+            <div style="font-size:14px;color:#fff;font-weight:700;" id="jdm_total">Total: ₹38,500</div>
+            <div style="font-size:12px;color:var(--green);" id="jdm_advance">Advance: ₹25,000</div>
+            <div style="font-size:13px;color:var(--gold-light);font-weight:700;" id="jdm_balance">Balance: ₹13,500</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;">
+          <button class="btn-primary" id="jdm_whatsapp_btn">
+            <span>💬</span> WhatsApp Live Update to Client
+          </button>
+          <button class="btn-secondary" id="jdm_invoice_btn">
+            <span>🧾</span> Create Invoice
+          </button>
+          <button class="btn-secondary" id="jdm_edit_btn">
+            <span>✏️</span> Edit Details
+          </button>
+        </div>
+
+        <h4 style="font-family:var(--font-heading);font-size:16px;text-transform:uppercase;color:#fff;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+          <span>Studio Stage Timeline</span>
+          <button class="btn-secondary" style="font-size:11px;padding:4px 8px;" onclick="toggleAddTimelineForm()">+ Add Stage Update</button>
+        </h4>
+
+        <!-- Timeline stage add form -->
+        <div id="addTimelineBox" style="display:none;background:#17171d;padding:14px;border-radius:8px;margin-bottom:18px;border:1px solid #333;">
+          <form id="timelineForm">
+            <input type="hidden" id="timeline_job_id" />
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label>Stage Name</label>
+                <select class="form-control" name="stage_name" id="tf_stage">
+                  <option>Consultation & Intake</option>
+                  <option>Surface Stripping & Prep</option>
+                  <option>Epoxy Priming</option>
+                  <option>Custom Paint & Airbrush Art</option>
+                  <option>Clearcoat & Curing</option>
+                  <option>Polishing & Detailing</option>
+                  <option>Quality Check & Ready</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Update Title</label>
+                <input type="text" class="form-control" name="title" placeholder="e.g. Sanding complete, 4 coats clear applied" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Technician Notes</label>
+              <textarea class="form-control" name="notes" rows="2" placeholder="Details about this stage..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Stage Progress Photo</label>
+              <input type="file" class="form-control" name="photo" accept="image/*" />
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:10px;">
+              <button type="button" class="btn-secondary" onclick="toggleAddTimelineForm()">Cancel</button>
+              <button type="submit" class="btn-primary">Post Timeline Update</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="jdm_timeline_list" style="display:flex;flex-direction:column;gap:12px;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD INVENTORY ITEM -->
+  <div class="modal-overlay" id="inventoryModal">
+    <div class="modal-content" style="max-width:550px;">
+      <div class="modal-header">
+        <h3>Add Material / Consumable</h3>
+        <button class="modal-close-btn" onclick="closeModal('inventoryModal')">✕</button>
+      </div>
+      <form id="inventoryForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Item Name *</label>
+            <input type="text" class="form-control" name="item_name" placeholder="e.g. Candy Apple Red Pearl" required />
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Category *</label>
+              <select class="form-control" name="category" required>
+                <option>Paints & Pearls</option>
+                <option>Clearcoats & Thinners</option>
+                <option>Primers & Fillers</option>
+                <option>Abrasives & Sanding</option>
+                <option>Airbrush & Detailing</option>
+                <option>Tools & Safety</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Unit</label>
+              <select class="form-control" name="unit">
+                <option>Liters</option>
+                <option>Cans</option>
+                <option>Sheets</option>
+                <option>Packs</option>
+                <option>Pieces</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Initial Quantity</label>
+              <input type="number" step="0.1" class="form-control" name="quantity" value="1" required />
+            </div>
+            <div class="form-group">
+              <label>Min Low-Stock Alert</label>
+              <input type="number" step="0.1" class="form-control" name="min_threshold" value="2" required />
+            </div>
+            <div class="form-group">
+              <label>Unit Cost (₹)</label>
+              <input type="number" class="form-control" name="unit_price" placeholder="Cost per unit" />
+            </div>
+            <div class="form-group">
+              <label>Supplier</label>
+              <input type="text" class="form-control" name="supplier" placeholder="e.g. Axalta, 3M, House of Kolor" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('inventoryModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Add to Inventory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE INVOICE -->
+  <div class="modal-overlay" id="invoiceModal">
+    <div class="modal-content" style="max-width:750px;">
+      <div class="modal-header">
+        <h3>Generate Customer Invoice</h3>
+        <button class="modal-close-btn" onclick="closeModal('invoiceModal')">✕</button>
+      </div>
+      <form id="invoiceForm">
+        <input type="hidden" name="job_id" id="inv_job_id" />
+        <div class="modal-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Customer Name *</label>
+              <input type="text" class="form-control" name="customer_name" id="inv_customer_name" required />
+            </div>
+            <div class="form-group">
+              <label>Customer Phone *</label>
+              <input type="text" class="form-control" name="customer_phone" id="inv_customer_phone" required />
+            </div>
+            <div class="form-group">
+              <label>Motorcycle Model *</label>
+              <input type="text" class="form-control" name="bike_model" id="inv_bike_model" required />
+            </div>
+            <div class="form-group">
+              <label>Payment Method</label>
+              <select class="form-control" name="payment_method">
+                <option>UPI</option>
+                <option>Cash</option>
+                <option>Bank Transfer</option>
+                <option>Card</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin:16px 0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <label style="font-size:11px;text-transform:uppercase;color:var(--text-muted);font-weight:600;">Work Breakdown / Billable Items</label>
+              <button type="button" class="btn-secondary" style="font-size:11px;padding:3px 8px;" onclick="addInvoiceItemRow()">+ Add Line</button>
+            </div>
+            <div id="invoiceItemsContainer" style="display:flex;flex-direction:column;gap:8px;">
+              <!-- Dynamic line items -->
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Discount (₹)</label>
+              <input type="number" class="form-control" name="discount" id="inv_discount" value="0" oninput="calculateInvoiceTotal()" />
+            </div>
+            <div class="form-group">
+              <label>Paid / Advance Amount (₹)</label>
+              <input type="number" class="form-control" name="paid_amount" id="inv_paid" value="0" oninput="calculateInvoiceTotal()" />
+            </div>
+          </div>
+
+          <div style="background:#09090c;padding:14px;border-radius:6px;border:1px solid #222;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <span style="font-size:12px;color:var(--text-muted);">Total: <strong id="inv_calc_total" style="color:#fff;">₹0</strong></span>
+            </div>
+            <div>
+              <span style="font-size:13px;color:var(--gold-light);font-weight:700;">Balance Due: <span id="inv_calc_balance">₹0</span></span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:14px;">
+            <label>Invoice Terms & Notes</label>
+            <textarea class="form-control" name="notes" rows="2" placeholder="e.g. 1 year paint warranty against peel and blistering."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('invoiceModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Generate Invoice</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: VIEW & PRINT INVOICE -->
+  <div class="modal-overlay" id="viewInvoiceModal">
+    <div class="modal-content" style="max-width:800px;background:#fff;color:#111;">
+      <div class="modal-header no-print" style="background:#111;color:#fff;">
+        <h3>HD Customs Tax Invoice</h3>
+        <button class="modal-close-btn" onclick="closeModal('viewInvoiceModal')">✕</button>
+      </div>
+      <div class="modal-body printable-invoice" id="printableInvoiceContent" style="padding:32px;font-family:Arial,sans-serif;color:#111;">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="modal-footer no-print" style="background:#f4f4f5;border-top:1px solid #e4e4e7;">
+        <button type="button" class="btn-secondary" onclick="closeModal('viewInvoiceModal')">Close</button>
+        <button type="button" class="btn-primary" onclick="window.print()">🖨️ Print / Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD GALLERY SHOWCASE -->
+  <div class="modal-overlay" id="galleryModal">
+    <div class="modal-content" style="max-width:560px;">
+      <div class="modal-header">
+        <h3>Publish Build to Portfolio</h3>
+        <button class="modal-close-btn" onclick="closeModal('galleryModal')">✕</button>
+      </div>
+      <form id="galleryForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Project Title *</label>
+            <input type="text" class="form-control" name="title" placeholder="e.g. Candy Crimson Cafe Racer" required />
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Motorcycle Model *</label>
+              <input type="text" class="form-control" name="bike_model" placeholder="e.g. Royal Enfield GT 650" required />
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <select class="form-control" name="category">
+                <option>Custom Bike Painting</option>
+                <option>Custom Graphics</option>
+                <option>Airbrush Art</option>
+                <option>Colour Transformation</option>
+                <option>Full Bike Makeover</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description & Story</label>
+            <textarea class="form-control" name="description" rows="3" placeholder="Craftsmanship details, paint layers used, design motif..."></textarea>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Before Photo (Original)</label>
+              <input type="file" class="form-control" name="before_image" accept="image/*" />
+            </div>
+            <div class="form-group">
+              <label>After Photo (Finished Build) *</label>
+              <input type="file" class="form-control" name="after_image" accept="image/*" required />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('galleryModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Publish Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTHENTICATION LOGIN -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal-content" style="max-width:400px;text-align:center;">
+      <div class="modal-header" style="justify-content:center;">
+        <h3 style="display:flex;align-items:center;gap:10px;">
+          <img src="assets/hd-customs-logo.png" style="height:32px;" alt="" /> Studio Admin Access
+        </h3>
+      </div>
+      <form id="loginForm">
+        <div class="modal-body" style="text-align:left;">
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">
+            Please enter your master studio credentials to manage builds and invoices.
+          </p>
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" id="loginUsername" value="admin" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" id="loginPassword" required />
+          </div>
+          <div id="loginError" style="color:var(--red);font-size:11px;display:none;margin-top:6px;"></div>
+        </div>
+        <div class="modal-footer" style="justify-content:center;">
+          <button type="submit" class="btn-primary" style="width:100%;padding:12px;">Login to Workshop OS</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

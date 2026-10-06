@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="HD CUSTOMS - Custom Motorcycle Painting, Airbrush Art & Artistic Finishing Studio." />
+  <title>HD CUSTOMS | Turn Your Bike Into Art</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="top-line"></div>
+
+  <!-- Navigation -->
+  <header class="navbar" id="navbar">
+    <a href="#home" class="brand" aria-label="HD CUSTOMS home">
+      <img src="assets/hd-customs-logo.png" alt="HD CUSTOMS logo" />
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a class="active" href="#home">Home</a>
+      <a href="#tracker">Track Bike</a>
+      <a href="#calculator">Estimator</a>
+      <a href="#work">Our Work</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="nav-actions">
+      <span id="dbConnectionStatus" class="badge" style="background:#111115;border:1px solid #333;font-size:11px;padding:6px 10px;border-radius:14px;color:var(--muted);cursor:pointer;" title="SQLite Database Status">
+        🟡 Checking Database...
+      </span>
+      <a class="phone" href="tel:+917639459207">☎ <span>7639459207</span></a>
+      <a class="btn btn-whatsapp" target="_blank" rel="noreferrer" href="https://wa.me/917639459207">WhatsApp</a>
+      <a class="btn btn-dashboard" href="/dashboard.html" title="Access Workshop Admin OS">🛠️ Studio OS</a>
+    </div>
+
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-copy">
+          <div class="paint-spray-label">CUSTOM MOTORCYCLE PAINTING STUDIO</div>
+          <h1>TURN YOUR BIKE<br><span>INTO ART.</span></h1>
+          <p>Handcrafted finishes. High-gloss candy coats. Signature airbrush graphics.</p>
+
+          <div class="hero-points">
+            <div><b>✧</b><span>Unique<br>Concepts</span></div>
+            <div><b>✦</b><span>Multi-Layer<br>Candy Pearl</span></div>
+            <div><b>✎</b><span>Handcrafted<br>Airbrush</span></div>
+            <div><b>◈</b><span>Ceramic 9H<br>Shield</span></div>
+          </div>
+
+          <div class="hero-buttons">
+            <a class="btn btn-gold" href="#calculator">Calculate Custom Price <span>→</span></a>
+            <a class="btn btn-dashboard" href="#tracker">🔍 Track Your Bike Status</a>
+            <a class="btn btn-whatsapp" target="_blank" rel="noreferrer" href="https://wa.me/917639459207?text=Hi%20HD%20CUSTOMS%2C%20I%20want%20to%20customize%20my%20bike.">Chat with Artist</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: LIVE CUSTOMER BIKE STATUS TRACKER -->
+    <section class="section dark-section" id="tracker">
+      <div class="section-heading">
+        <div>
+          <h2>TRACK YOUR <span>BIKE BUILD</span></h2>
+          <p>Real-time workshop progress, stage photos, and delivery timeline</p>
+        </div>
+        <span class="badge" style="background:#111;border:1px solid var(--gold);color:var(--gold-light);padding:6px 12px;border-radius:20px;font-size:11px;">
+          ● Live Workshop Link
+        </span>
+      </div>
+
+      <div class="tracker-box">
+        <form id="trackForm" class="tracker-search-bar" onsubmit="handleTrackSearch(event)">
+          <input type="text" id="trackInput" placeholder="Enter Job Tracking ID (e.g. HDC-2026-101) or Registered Phone" required />
+          <button type="submit" class="btn btn-gold" style="padding:0 24px;">Track Now →</button>
+        </form>
+
+        <div class="demo-pills">
+          <span>Try Demo Builds:</span>
+          <span class="demo-pill" onclick="searchDemoJob('HDC-2026-101')">HDC-2026-101 (Continental GT 650)</span>
+          <span class="demo-pill" onclick="searchDemoJob('HDC-2026-102')">HDC-2026-102 (Yamaha R15 V4)</span>
+          <span class="demo-pill" onclick="searchDemoJob('HDC-2026-103')">HDC-2026-103 (KTM Duke 390)</span>
+        </div>
+
+        <div id="trackResult" class="track-result-card">
+          <div class="track-result-header">
+            <div>
+              <div style="font-size:12px;color:var(--gold-light);font-family:monospace;font-weight:700;" id="tr_code">HDC-2026-101</div>
+              <h3 style="font-family:'Oswald',sans-serif;font-size:26px;color:#fff;margin:4px 0;" id="tr_bike">Royal Enfield Continental GT 650</h3>
+              <p style="font-size:12px;color:var(--muted);" id="tr_customer">Customer: Karthik Raja • TN 05 AK 9988</p>
+            </div>
+            <div style="text-align:right;">
+              <span id="tr_status_badge" class="badge" style="background:rgba(217,162,27,0.15);color:var(--gold2);border:1px solid var(--gold);padding:6px 14px;border-radius:6px;font-weight:700;font-size:13px;">
+                In Progress
+              </span>
+              <div style="font-size:12px;color:var(--muted);margin-top:6px;" id="tr_delivery">Est. Handover: Oct 12, 2026</div>
+            </div>
+          </div>
+
+          <!-- Dynamic Stepper -->
+          <div class="track-stepper" id="tr_stepper">
+            <!-- Dynamically populated steps -->
+          </div>
+
+          <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:20px;background:#0f0f13;padding:20px;border-radius:8px;border:1px solid #282830;" class="track-info-split">
+            <div>
+              <h4 style="font-size:13px;text-transform:uppercase;color:var(--gold-light);margin-bottom:8px;">Design Concept & Custom Finish</h4>
+              <p style="font-size:13px;color:#eee;" id="tr_finish">Candy Apple Red & Chrome Dual-Tone</p>
+              <p style="font-size:12px;color:var(--muted);margin-top:6px;" id="tr_notes"></p>
+
+              <h4 style="font-size:13px;text-transform:uppercase;color:var(--gold-light);margin:16px 0 8px;">Workshop Stage Updates</h4>
+              <div id="tr_timeline" style="display:flex;flex-direction:column;gap:10px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <div style="background:#16161b;padding:16px;border-radius:8px;border:1px solid #333;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <h4 style="font-size:13px;text-transform:uppercase;color:#fff;margin-bottom:12px;">Payment Summary</h4>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                  <span style="color:var(--muted);">Total Build Estimate:</span>
+                  <span style="font-weight:bold;color:#fff;" id="tr_total">₹38,500</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">
+                  <span style="color:var(--muted);">Advance Received:</span>
+                  <span style="color:var(--green);font-weight:bold;" id="tr_advance">₹25,000</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:14px;border-top:1px solid #333;padding-top:8px;margin-top:8px;">
+                  <span style="font-weight:bold;color:#fff;">Balance Due on Handover:</span>
+                  <span style="color:var(--gold-light);font-weight:bold;" id="tr_balance">₹13,500</span>
+                </div>
+              </div>
+
+              <div style="margin-top:18px;">
+                <button class="btn btn-whatsapp" id="tr_whatsapp_btn" style="width:100%;">
+                  <span>💬</span> Discuss This Build on WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="trackError" style="display:none;color:var(--pink);font-size:13px;margin-top:14px;text-align:center;">
+          No matching motorcycle build found. Please verify your tracking ID or phone number.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: INTERACTIVE PRICE & ESTIMATE CALCULATOR -->
+    <section class="section" id="calculator">
+      <div class="section-heading">
+        <div>
+          <h2>CUSTOM ESTIMATE <span>CALCULATOR</span></h2>
+          <p>Select your motorcycle style, finish, and artistic detailing to calculate a transparent quote</p>
+        </div>
+        <span class="mini-link">Instant Studio Price Calculator</span>
+      </div>
+
+      <div class="calc-container">
+        <!-- Configuration Choices -->
+        <div>
+          <div class="calc-step-title">1. Choose Your Motorcycle Category</div>
+          <div class="choice-grid" id="calcBikeChoices">
+            <div class="choice-btn selected" data-bike="Royal Enfield / Cruiser" data-base="16000">
+              <span class="choice-name">Royal Enfield / Cruiser</span>
+              <span class="choice-sub">GT650, Classic, Hunter, Meteor</span>
+            </div>
+            <div class="choice-btn" data-bike="Sportbike / Aerodynamic" data-base="19000">
+              <span class="choice-name">Sportbike / Supersport</span>
+              <span class="choice-sub">R15, Ninja, RC 390, ZX-4R</span>
+            </div>
+            <div class="choice-btn" data-bike="Streetfighter / Naked" data-base="15000">
+              <span class="choice-name">Naked / Streetfighter</span>
+              <span class="choice-sub">KTM Duke, MT-15, CB300R</span>
+            </div>
+            <div class="choice-btn" data-bike="Custom Chopper / Vintage" data-base="22000">
+              <span class="choice-name">Chopper / Vintage Custom</span>
+              <span class="choice-sub">Harley, Bobber, Cafe Resto</span>
+            </div>
+          </div>
+
+          <div class="calc-step-title">2. Choose Paint Finish & Depth</div>
+          <div class="choice-grid" id="calcFinishChoices">
+            <div class="choice-btn selected" data-finish="Multi-Layer Candy Pearl" data-cost="8000">
+              <span class="choice-name">Candy Apple / Pearl</span>
+              <span class="choice-sub">Deep 3-stage colored clearcoat</span>
+            </div>
+            <div class="choice-btn" data-finish="Ultra-Matte Stealth" data-cost="5000">
+              <span class="choice-name">Ultra-Matte Stealth</span>
+              <span class="choice-sub">Non-reflective satin surface</span>
+            </div>
+            <div class="choice-btn" data-finish="Chameleon Color-Shift" data-cost="11000">
+              <span class="choice-name">Chameleon Shift</span>
+              <span class="choice-sub">Dual-spectrum prismatic effect</span>
+            </div>
+            <div class="choice-btn" data-finish="High-Gloss Mirror Dual-Tone" data-cost="6000">
+              <span class="choice-name">High-Gloss Dual-Tone</span>
+              <span class="choice-sub">Classic mirror clearcut polish</span>
+            </div>
+          </div>
+
+          <div class="calc-step-title">3. Detailing & Artistic Add-ons</div>
+          <div id="calcAddons">
+            <div class="addon-row" data-addon="Airbrush Tank Artwork / Mascot" data-cost="7500">
+              <div>
+                <strong style="font-size:12px;color:#fff;">Airbrush Tank Artwork / Mural</strong>
+                <small style="display:block;color:var(--muted);font-size:10px;">Freehand custom illustration with Iwata airbrush</small>
+              </div>
+              <strong style="color:var(--gold-light);font-size:12px;">+₹7,500</strong>
+            </div>
+
+            <div class="addon-row" data-addon="Custom Racing Decals & Striping" data-cost="3500">
+              <div>
+                <strong style="font-size:12px;color:#fff;">Geometric Racing Stripes & Livery</strong>
+                <small style="display:block;color:var(--muted);font-size:10px;">Hand-masked multi-color racing vector layout</small>
+              </div>
+              <strong style="color:var(--gold-light);font-size:12px;">+₹3,500</strong>
+            </div>
+
+            <div class="addon-row" data-addon="9H Ceramic Shield Protection" data-cost="4500">
+              <div>
+                <strong style="font-size:12px;color:#fff;">9H Ceramic Matrix Shield</strong>
+                <small style="display:block;color:var(--muted);font-size:10px;">Hydrophobic scratch resistance & deep gloss seal</small>
+              </div>
+              <strong style="color:var(--gold-light);font-size:12px;">+₹4,500</strong>
+            </div>
+
+            <div class="addon-row" data-addon="Alloy Rims & Calipers Custom Paint" data-cost="3800">
+              <div>
+                <strong style="font-size:12px;color:#fff;">Alloy Wheels & Calipers Matching Finish</strong>
+                <small style="display:block;color:var(--muted);font-size:10px;">Heat-resistant wheel & brake caliper custom coating</small>
+              </div>
+              <strong style="color:var(--gold-light);font-size:12px;">+₹3,800</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Total & Direct Booking Form -->
+        <div class="calc-summary-card">
+          <div>
+            <h3 style="font-family:'Oswald',sans-serif;font-size:22px;text-transform:uppercase;">Estimated Studio Investment</h3>
+            <p style="font-size:11px;color:var(--muted);margin-top:4px;">Includes bare-metal preparation, priming, custom paint, 2K clearcoats, and mirror buffing.</p>
+
+            <div class="calc-price-display">
+              <div style="font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:1px;">Total Estimated Cost</div>
+              <div class="calc-price-amount" id="calcFinalPrice">₹24,000</div>
+              <div style="font-size:11px;color:var(--green);margin-top:4px;">✓ Inclusive of premium European PPG / Standox materials</div>
+            </div>
+
+            <form id="calculatorBookingForm" onsubmit="handleCalculatorSubmit(event)">
+              <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+                <input type="text" id="cb_name" placeholder="Your Name *" required />
+                <input type="tel" id="cb_phone" placeholder="WhatsApp / Phone Number *" required />
+                <input type="text" id="cb_bike" placeholder="Exact Bike Model (e.g. Continental GT 650, R15 V4) *" required />
+                <textarea id="cb_notes" rows="2" placeholder="Any specific design inspiration or deadline?"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-gold" style="width:100%;padding:14px;">
+                Lock Quote & Book Studio Consultation <span>→</span>
+              </button>
+            </form>
+          </div>
+
+          <div id="calcSuccessMsg" style="display:none;background:rgba(16,185,129,0.15);border:1px solid var(--green);padding:12px;border-radius:6px;margin-top:12px;font-size:11px;color:#fff;text-align:center;">
+            Quote saved! Tracking code: <strong id="calcSuccessCode" style="color:var(--gold-light);"></strong>. Opening WhatsApp...
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: SERVICES -->
+    <section class="section dark-section" id="services">
+      <div class="section-heading">
+        <div>
+          <h2>OUR <span>SERVICES</span></h2>
+          <p>Custom painting solutions engineered for every motorcycle enthusiast</p>
+        </div>
+        <a class="mini-link" target="_blank" rel="noreferrer" href="https://instagram.com/hd_customs_">See our Instagram reels ↗</a>
+      </div>
+
+      <div class="services-grid" id="servicesGrid">
+        <article class="service-card"><div class="service-icon">✦</div><h3>Custom Bike Painting</h3><p>Complete colour and design transformations from bare metal to mirror gloss.</p></article>
+        <article class="service-card"><div class="service-icon">⚡</div><h3>Custom Graphics</h3><p>Precision plotted stripes, decals, race livery and signature vector accents.</p></article>
+        <article class="service-card"><div class="service-icon">◉</div><h3>Artistic Finishing</h3><p>Hand-turned gold leafing, metal-flake depth, and bespoke artisan badges.</p></article>
+        <article class="service-card"><div class="service-icon">◒</div><h3>Colour Transformation</h3><p>Bold factory resets and ultra-vibrant candy pearls that turn heads anywhere.</p></article>
+        <article class="service-card"><div class="service-icon">✎</div><h3>Personalized Designs</h3><p>Custom sketches designed around your personal aesthetic and riding philosophy.</p></article>
+        <article class="service-card"><div class="service-icon">✺</div><h3>Airbrush Art</h3><p>Intricate airbrushed murals, gradients, and mechanical motifs on tanks and cowls.</p></article>
+        <article class="service-card"><div class="service-icon">◐</div><h3>Matte &amp; Gloss Finishes</h3><p>Satin ceramic coats and mirror-cut ultra-high solids 2K clearcoats.</p></article>
+        <article class="service-card"><div class="service-icon">♞</div><h3>Full Bike Makeover</h3><p>End-to-end transformation covering frame, tank, rims, engine fins, and tins.</p></article>
+      </div>
+    </section>
+
+    <!-- INSTAGRAM SOCIAL PROOF BAND -->
+    <section class="instagram-band" id="work">
+      <div class="instagram-copy">
+        <div class="insta-mark">◎</div>
+        <div>
+          <h2>SEE OUR <span>LATEST WORK</span></h2>
+          <p>Follow <strong>@hd_customs_</strong> for daily custom builds, timelapse spray videos, and client delivery reactions.</p>
+        </div>
+      </div>
+      <a class="btn btn-instagram" target="_blank" rel="noreferrer" href="https://instagram.com/hd_customs_">Follow @hd_customs_ ↗</a>
+    </section>
+
+    <!-- BEFORE & AFTER + PROCESS SPLIT SECTION -->
+    <section class="section split-section">
+      <div class="panel">
+        <div class="panel-heading">
+          <h2>BEFORE <span>&amp; AFTER</span></h2>
+          <p>Real bikes. Real hand-painted transformations.</p>
+        </div>
+
+        <div class="ba-interactive-container" id="baContainer">
+          <div class="ba-layer" id="baAfter" style="background-image:url('assets/HD Customs_ Turn Your Bike into Art.png');"></div>
+          <div class="ba-layer" id="baBefore" style="background-image:url('assets/hero.jpg');width:50%;"></div>
+          <div class="ba-slider-handle" id="baHandle">
+            <div class="ba-slider-button">⇄</div>
+          </div>
+          <div style="position:absolute;left:16px;bottom:14px;background:#000;color:#fff;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;">BEFORE</div>
+          <div style="position:absolute;right:16px;bottom:14px;background:var(--gold);color:#000;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;">AFTER (HD CUSTOMS)</div>
+        </div>
+        <p style="font-size:11px;color:#777;margin-top:12px;">Drag or hover across the motorcycle to inspect the transformation details.</p>
+      </div>
+
+      <div class="panel" id="process">
+        <div class="panel-heading">
+          <h2>OUR <span>PROCESS</span></h2>
+          <p>From rider idea to a showroom masterpiece.</p>
+        </div>
+        <div class="process-list">
+          <div class="process-step"><span>01</span><div><h3>Consultation & Intake</h3><p>Discuss the bike, color palette, reference concepts, and budget.</p></div></div>
+          <div class="process-step"><span>02</span><div><h3>Design Concept & Samples</h3><p>Spray test swatches and choose exact pearls, flakes, and graphics.</p></div></div>
+          <div class="process-step"><span>03</span><div><h3>Surface Stripping & Epoxy Priming</h3><p>Sand to base, neutralize metal/plastics, and seal with anti-rust epoxy.</p></div></div>
+          <div class="process-step"><span>04</span><div><h3>Custom Painting & Airbrush Art</h3><p>Apply multi-stage base, candy dye layers, hand-masking, and artwork.</p></div></div>
+          <div class="process-step"><span>05</span><div><h3>Clearcoat, Mirror Buffing & Handover</h3><p>Ultra-high solids 2K clear baked under IR lamps, detailed, and delivered.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE PORTFOLIO FROM DATABASE -->
+    <section class="section dark-section">
+      <div class="section-heading">
+        <div>
+          <h2>FEATURED <span>STUDIO BUILDS</span></h2>
+          <p>Hand-crafted in our Tamil Nadu workshop</p>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(290px, 1fr));gap:20px;" id="publicGalleryGrid">
+        <!-- Live populated from /api/gallery -->
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="section about-section" id="about">
+      <div class="about-image-wrap">
+        <img src="assets/hero.jpg" alt="HD CUSTOMS artist with a custom motorcycle" />
+        <div class="about-badge">HD<br><span>CUSTOMS</span></div>
+      </div>
+      <div class="about-copy">
+        <div class="eyebrow">THE ARTIST BEHIND THE PAINT</div>
+        <h2>Built for riders who want a bike that feels <span>different.</span></h2>
+        <p>HD CUSTOMS is an artisanal motorcycle painting & artistic finishing studio based in Tamil Nadu. We don't just change colours — we sculpt visual identities for riders who see their motorcycle as an extension of their character.</p>
+        <div class="about-stats">
+          <div><strong>100%</strong><span>Custom-first<br>approach</span></div>
+          <div><strong>2K</strong><span>Automotive<br>UHS Clearcoats</span></div>
+          <div><strong>3-Stage</strong><span>Mirror buffing<br>& 9H seal</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIRECT QUOTE & INQUIRY FORM -->
+    <section class="quote-section" id="contact">
+      <div class="quote-copy">
+        <div class="eyebrow">LET'S CREATE YOUR NEXT LOOK</div>
+        <h2>GET A <span>CUSTOM QUOTE</span></h2>
+        <p>Tell us your motorcycle model, your vision, and the finish style you want. We'll build you a concept mockup and timeline.</p>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:24px;">
+          <a href="tel:+917639459207" style="color:#eee;font-weight:600;">☎ +91 7639459207</a>
+          <a target="_blank" rel="noreferrer" href="https://wa.me/917639459207" style="color:#eee;">◉ WhatsApp: 7639459207</a>
+          <a target="_blank" rel="noreferrer" href="https://instagram.com/hd_customs_" style="color:#eee;">◎ Instagram: @hd_customs_</a>
+        </div>
+      </div>
+
+      <form class="quote-form" id="quoteForm" onsubmit="handleDirectQuoteSubmit(event)">
+        <div class="form-grid">
+          <label>Your Name *<input name="name" required placeholder="Your full name" /></label>
+          <label>Phone Number (WhatsApp) *<input name="phone" required placeholder="Phone number" /></label>
+          <label>Bike Model *<input name="bike" required placeholder="e.g. Hunter 350 / GT 650 / R15" /></label>
+          <label>Painting Type
+            <select name="type">
+              <option>Custom Bike Painting</option>
+              <option>Custom Graphics</option>
+              <option>Airbrush Art</option>
+              <option>Colour Transformation</option>
+              <option>Full Bike Makeover</option>
+            </select>
+          </label>
+        </div>
+        <label>Requirements & Style Preferences
+          <textarea name="requirements" rows="4" placeholder="Tell us your colours, metallic or matte, graphics, timeline, etc."></textarea>
+        </label>
+        <button class="btn btn-gold submit-btn" type="submit" style="width:100%;padding:14px;">
+          Submit Inquiry to Studio <span>→</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- STUDIO LOCATION -->
+    <section class="location-section">
+      <div>
+        <div class="eyebrow">VISIT THE STUDIO</div>
+        <h2>OUR <span>LOCATION</span></h2>
+        <p>Perumal Kovil Street,<br>Vellerithangal, Papparambakam,<br>Tamil Nadu – 602025</p>
+        <a class="btn btn-gold" target="_blank" rel="noreferrer" href="https://maps.app.goo.gl/5sWhZ5kk3j3ve9gU9">Open Google Maps ↗</a>
+      </div>
+      <div class="map-card">
+        <div class="fake-map-grid"></div>
+        <div class="pin">●</div>
+        <div class="map-label">HD CUSTOMS STUDIO</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <img src="assets/hd-customs-logo.png" alt="HD CUSTOMS" />
+      <p>Custom Motorcycle Painting & Artistic Finishing Studio.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#home">Home</a>
+      <a href="#tracker">Track Bike</a>
+      <a href="#calculator">Estimator</a>
+      <a href="#work">Our Work</a>
+      <a href="#services">Services</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+      <a href="/dashboard.html" style="color:var(--gold-light);">Studio OS</a>
+    </div>
+    <div class="footer-copy">© <span id="year"></span> HD CUSTOMS. All rights reserved.</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
