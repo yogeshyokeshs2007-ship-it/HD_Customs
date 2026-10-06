@@ -51,7 +51,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'online',
     database: 'connected',
-    database_file: 'data/hd_customs.db',
+    database_file: process.env.DB_PATH || 'data/hd_customs.db',
     total_jobs: jobCount,
     timestamp: new Date().toISOString(),
     service: 'HD Customs Workshop Platform API',

@@ -3,13 +3,12 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
-// Ensure data folder exists
+// Use the persistent mount path in production, or the local data folder by default.
 const dataDir = path.join(__dirname, '..', 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-const dbPath = path.join(dataDir, 'hd_customs.db');
+const dbPath = process.env.DB_PATH
+  ? path.resolve(process.env.DB_PATH)
+  : path.join(dataDir, 'hd_customs.db');
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new DatabaseSync(dbPath);
 
 // Enable foreign keys

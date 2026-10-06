@@ -21,13 +21,17 @@ COMPLETE PLATFORM INCLUDED:
    - /api/auth        : Studio admin authentication
 
 3. DATABASE (SQLite with node:sqlite):
-   - Database location: data/hd_customs.db
-   - Full ACID transactional database with pre-seeded builds, inquiries, and inventory!
+   - Local database location: data/hd_customs.db (or the DB_PATH environment variable)
+   - In production, configure DB_PATH on a persistent disk.
 
 HOW TO RUN:
 Option 1: In terminal, run:
    npm start
    (or: node server.js)
+
+For production, deploy the included render.yaml as a Render Blueprint and set
+ADMIN_USERNAME and ADMIN_PASSWORD in the service environment. SQLite needs the
+persistent disk configured by the Blueprint; serverless temporary storage is not suitable.
 
 Option 2: Open in your browser:
    Customer Website: http://localhost:3000

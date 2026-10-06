@@ -3,6 +3,9 @@
   "version": "2.0.0",
   "description": "HD CUSTOMS - Full-Stack Workshop Studio Platform & Dashboard",
   "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"

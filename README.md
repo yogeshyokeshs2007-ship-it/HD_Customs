@@ -97,3 +97,14 @@ node server.js
 The server will start on port `3000`.
 
 `.env.example` documents the required variable names. The app reads credentials from environment variables; it does not load `.env` files itself.
+
+## ☁️ Deploy with a persistent SQLite database
+
+This app uses SQLite, so deploy it to a Node.js host with a persistent disk rather than a serverless function. The included `render.yaml` configures a Render web service with a persistent disk mounted at `/var/data`.
+
+1. In Render, create a **Blueprint** from this GitHub repository and apply `render.yaml`.
+2. In the service's **Environment** settings, set `ADMIN_USERNAME` and a strong, unique `ADMIN_PASSWORD`.
+3. Wait for the deploy to finish, then open the service URL. The customer site and workshop dashboard are served from the same origin as the API.
+4. Confirm the service is healthy at `/api/health`. The database file is stored on the persistent disk at `/var/data/hd_customs.db`.
+
+The persistent disk requires a paid Render instance. Do not point a Vercel serverless deployment at this SQLite backend; its filesystem is not persistent.
